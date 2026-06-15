@@ -5,5 +5,9 @@ from . import views
 app_name = "selector"
 
 urlpatterns = [
+    path("", views.home, name="home"),
+    path("select/", views.select, name="select"),
+    path("result/<int:pk>/", views.result, name="result"),
+    path("history/", views.history, name="history"),
     path("api/weather/", views.weather_api, name="weather_api"),
 ]
