@@ -5,6 +5,7 @@ from django.views.decorators.http import require_GET
 
 from catalog.models import Plant, PlantCategory
 
+from .analytics import build_statistics
 from .forms import RoomConditionForm
 from .matching import rank_plants
 from .models import MatchResult, RoomCondition
@@ -66,6 +67,11 @@ def result(request, pk):
         "best": matches[0] if matches else None,
     }
     return render(request, "selector/result.html", context)
+
+
+def statistics(request):
+    """Aggregate statistics over all recorded matches (Pandas)."""
+    return render(request, "selector/statistics.html", {"stats": build_statistics()})
 
 
 @login_required
