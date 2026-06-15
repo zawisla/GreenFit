@@ -1,0 +1,22 @@
+# Core framework
+Django==5.2.15
+
+# External API requests (Open-Meteo weather integration)
+requests==2.34.2
+
+# Data analysis for compatibility statistics
+pandas==3.0.3
+
+# Image handling for plant photos (ImageField)
+Pillow==12.2.0
+
+# Configuration via environment variables
+python-dotenv==1.2.2
+dj-database-url==3.1.2
+
+# Static files serving with DEBUG=False
+whitenoise==6.12.0
+
+# --- Production database driver (install on the host as needed) ---
+# PostgreSQL: psycopg[binary]==3.2.10
+# MySQL:      mysqlclient==2.2.7
