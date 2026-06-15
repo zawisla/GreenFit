@@ -1,0 +1,6 @@
+/* GreenFit custom styles (extends Bootstrap 5). Expanded in the UI phase. */
+:root {
+    --gf-green: #2e7d32;
+    --gf-green-dark: #1b5e20;
+    --gf-green-light: #e8f5e9;
+}
