@@ -160,7 +160,10 @@ LOGOUT_REDIRECT_URL = "selector:home"
 # Hardening that only applies on the production host (DEBUG=False behind HTTPS).
 if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = "DENY"
+    # HSTS is intentionally left unset: the project is hosted on a shared
+    # *.pythonanywhere.com subdomain where enabling HSTS would be inappropriate.
