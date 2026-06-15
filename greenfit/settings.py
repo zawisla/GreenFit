@@ -13,6 +13,7 @@ import dj_database_url
 from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
 import os
+import sys
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -137,6 +138,13 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
+
+# The manifest storage requires `collectstatic` to have run; while testing it
+# has not, so fall back to a plain storage that does not need a manifest.
+if "test" in sys.argv:
+    STORAGES["staticfiles"]["BACKEND"] = (
+        "django.contrib.staticfiles.storage.StaticFilesStorage"
+    )
 
 # User-uploaded media (plant photos)
 MEDIA_URL = "media/"
