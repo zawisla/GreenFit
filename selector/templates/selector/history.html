@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}История подборов{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-4">История ваших подборов</h1>
+
+{% if rooms %}
+    <div class="list-group shadow-sm">
+        {% for room in rooms %}
+            {% with best=room.results.all|first %}
+            <a href="{% url 'selector:result' room.pk %}"
+               class="list-group-item list-group-item-action">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="fw-semibold">Подбор от {{ room.created_at|date:"d.m.Y H:i" }}</div>
+                        <div class="small text-muted">
+                            Свет: {{ room.get_light_level_display }} ·
+                            Температура: {{ room.temperature }} °C ·
+                            {{ room.get_room_size_display }} помещение ·
+                            Питомцы: {% if room.has_pets %}есть{% else %}нет{% endif %}
+                        </div>
+                        {% if best %}
+                            <div class="small mt-1">
+                                🌿 Лучший вариант: <strong>{{ best.plant.name }}</strong>
+                                — {{ best.match_score|floatformat:0 }}%
+                            </div>
+                        {% endif %}
+                    </div>
+                    <span class="fs-4 text-success">→</span>
+                </div>
+            </a>
+            {% endwith %}
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="alert alert-info">
+        У вас пока нет сохранённых подборов.
+        <a href="{% url 'selector:select' %}" class="alert-link">Выполните первый подбор</a>.
+    </div>
+{% endif %}
+{% endblock %}

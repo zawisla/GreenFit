@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}GreenFit — подберите растения под ваш дом{% endblock %}
+
+{% block content %}
+<section class="gf-hero p-4 p-md-5 mb-4">
+    <div class="row align-items-center g-4">
+        <div class="col-md-7">
+            <h1 class="display-5 fw-bold text-success">Правильное растение для вашей комнаты</h1>
+            <p class="lead mb-4">
+                GreenFit анализирует шесть параметров микроклимата вашего помещения и
+                подбирает комнатные растения с процентом совместимости и понятными
+                пояснениями по каждому критерию.
+            </p>
+            <a href="{% url 'selector:select' %}" class="btn btn-success btn-lg">Подобрать растения →</a>
+            <a href="{% url 'selector:statistics' %}" class="btn btn-outline-success btn-lg ms-2">Статистика</a>
+        </div>
+        <div class="col-md-5 text-center">
+            <div class="display-1">🪴</div>
+        </div>
+    </div>
+</section>
+
+<div class="row text-center g-3 mb-4">
+    <div class="col-6 col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body">
+                <div class="display-6 fw-bold text-success">{{ plant_count }}</div>
+                <div class="text-muted">растений в каталоге</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body">
+                <div class="display-6 fw-bold text-success">{{ category_count }}</div>
+                <div class="text-muted">категорий</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-4">
+        <div class="card h-100 border-0 shadow-sm">
+            <div class="card-body">
+                <div class="display-6 fw-bold text-success">{{ safe_count }}</div>
+                <div class="text-muted">безопасны для животных</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h2 class="h4 mb-3">Как это работает</h2>
+<div class="row g-3">
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="fs-2">📝</div>
+                <h3 class="h5">1. Опишите комнату</h3>
+                <p class="mb-0 text-muted">Свет, влажность, температура, размер, наличие питомцев и
+                    свободное время на уход. Температуру и влажность можно подставить из погоды.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="fs-2">⚖️</div>
+                <h3 class="h5">2. Система считает совместимость</h3>
+                <p class="mb-0 text-muted">Каждое растение оценивается по шести взвешенным критериям —
+                    от 0 до 100 %.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="fs-2">🌱</div>
+                <h3 class="h5">3. Получите рейтинг</h3>
+                <p class="mb-0 text-muted">Ранжированный список с пояснениями по каждому критерию.
+                    Зарегистрируйтесь, чтобы сохранять историю подборов.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

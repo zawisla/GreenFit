@@ -1,6 +1,82 @@
-/* GreenFit custom styles (extends Bootstrap 5). Expanded in the UI phase. */
+/* GreenFit custom styles (extends Bootstrap 5). */
 :root {
     --gf-green: #2e7d32;
     --gf-green-dark: #1b5e20;
     --gf-green-light: #e8f5e9;
+    --gf-good: #2e7d32;
+    --gf-ok: #f57f17;
+    --gf-bad: #c62828;
+}
+
+body {
+    background-color: #f6f9f6;
+}
+
+/* Navigation and footer */
+.gf-navbar {
+    background: linear-gradient(90deg, var(--gf-green-dark), var(--gf-green));
+}
+.gf-navbar .btn-link.nav-link {
+    border: 0;
+    padding-top: .5rem;
+    padding-bottom: .5rem;
+}
+.gf-footer {
+    background-color: #eef3ee;
+    color: #5a6b5a;
+    border-top: 1px solid #dde7dd;
+}
+
+/* Hero block on the home page */
+.gf-hero {
+    background: linear-gradient(120deg, var(--gf-green-light), #ffffff);
+    border-radius: 1rem;
+}
+
+/* Compatibility score badge */
+.score-badge {
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1;
+}
+.score-good { color: var(--gf-good); }
+.score-ok { color: var(--gf-ok); }
+.score-bad { color: var(--gf-bad); }
+
+.progress-good > .progress-bar { background-color: var(--gf-good); }
+.progress-ok > .progress-bar { background-color: var(--gf-ok); }
+.progress-bad > .progress-bar { background-color: var(--gf-bad); }
+
+/* Per-criterion explanation rows */
+.criterion {
+    border-left: 4px solid #ced4da;
+    padding: .35rem .75rem;
+    margin-bottom: .4rem;
+    background: #fff;
+    border-radius: .25rem;
+}
+.criterion.good { border-left-color: var(--gf-good); }
+.criterion.ok { border-left-color: var(--gf-ok); }
+.criterion.bad { border-left-color: var(--gf-bad); }
+
+/* Plant cards */
+.plant-card {
+    transition: box-shadow .15s ease-in-out, transform .15s ease-in-out;
+}
+.plant-card:hover {
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .1);
+    transform: translateY(-2px);
+}
+.plant-thumb {
+    height: 180px;
+    object-fit: cover;
+    background-color: var(--gf-green-light);
+}
+.plant-thumb-placeholder {
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3.5rem;
+    background-color: var(--gf-green-light);
 }

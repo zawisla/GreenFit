@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Подбор растений — параметры помещения{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-9">
+        <h1 class="h3 mb-4">Параметры вашего помещения</h1>
+
+        <div class="card mb-4 border-success-subtle">
+            <div class="card-body">
+                <label class="form-label fw-semibold" for="weather-city">
+                    🌤️ Подставить температуру и влажность из погоды
+                </label>
+                <div class="input-group">
+                    <input type="text" id="weather-city" class="form-control"
+                           placeholder="Например, Москва" autocomplete="off">
+                    <button class="btn btn-outline-success" type="button" id="weather-btn">Узнать погоду</button>
+                </div>
+                <div id="weather-status" class="form-text"></div>
+            </div>
+        </div>
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+            {% endif %}
+            <div class="row">
+                {% for field in form %}
+                    <div class="col-md-6">{% include "partials/field.html" %}</div>
+                {% endfor %}
+            </div>
+            <button type="submit" class="btn btn-success btn-lg mt-2">Подобрать растения</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    const btn = document.getElementById('weather-btn');
+    if (!btn) return;
+    const cityInput = document.getElementById('weather-city');
+    const status = document.getElementById('weather-status');
+    const tempField = document.getElementById('id_temperature');
+    const humidityField = document.getElementById('id_humidity');
+    const endpoint = "{% url 'selector:weather_api' %}";
+
+    btn.addEventListener('click', async function () {
+        const city = cityInput.value.trim();
+        if (!city) {
+            status.textContent = 'Введите название города.';
+            return;
+        }
+        btn.disabled = true;
+        status.textContent = 'Запрашиваем погоду…';
+        try {
+            const response = await fetch(endpoint + '?city=' + encodeURIComponent(city));
+            const data = await response.json();
+            if (!response.ok) {
+                status.textContent = data.error || 'Не удалось получить погоду.';
+                return;
+            }
+            if (tempField) tempField.value = data.temperature;
+            if (humidityField) humidityField.value = data.humidity_level;
+            status.innerHTML = '✅ ' + data.place + ': ' + data.temperature +
+                ' °C, влажность ' + data.humidity_percent + ' %.';
+        } catch (error) {
+            status.textContent = 'Ошибка сети. Попробуйте ещё раз.';
+        } finally {
+            btn.disabled = false;
+        }
+    });
+})();
+</script>
+{% endblock %}

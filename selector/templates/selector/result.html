@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Результаты подбора растений{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+    <h1 class="h3 mb-0">Результаты подбора</h1>
+    <a href="{% url 'selector:select' %}" class="btn btn-outline-success">Подобрать заново</a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <h2 class="h6 text-muted mb-2">Ваши условия</h2>
+        <div class="d-flex flex-wrap gap-2">
+            <span class="badge text-bg-light border">Свет: {{ room.get_light_level_display }}</span>
+            <span class="badge text-bg-light border">Влажность: {{ room.get_humidity_display }}</span>
+            <span class="badge text-bg-light border">Температура: {{ room.temperature }} °C</span>
+            <span class="badge text-bg-light border">Помещение: {{ room.get_room_size_display }}</span>
+            <span class="badge text-bg-light border">Питомцы: {% if room.has_pets %}есть{% else %}нет{% endif %}</span>
+            <span class="badge text-bg-light border">Время на уход: {{ room.get_care_time_display }}</span>
+        </div>
+    </div>
+</div>
+
+{% if matches %}
+    <p class="text-muted">Растения отсортированы по убыванию совместимости.</p>
+    {% for match in matches %}
+        <div class="card plant-card mb-3">
+            <div class="row g-0">
+                <div class="col-md-3">
+                    {% if match.plant.image %}
+                        <img src="{{ match.plant.image.url }}" class="img-fluid rounded-start plant-thumb w-100"
+                             alt="{{ match.plant.name }}">
+                    {% else %}
+                        <div class="plant-thumb-placeholder rounded-start">🪴</div>
+                    {% endif %}
+                </div>
+                <div class="col-md-9">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h3 class="h5 mb-0">{{ forloop.counter }}. {{ match.plant.name }}</h3>
+                                {% if match.plant.scientific_name %}
+                                    <div class="text-muted fst-italic small">{{ match.plant.scientific_name }}</div>
+                                {% endif %}
+                                <span class="badge text-bg-success-subtle text-success-emphasis mt-1">
+                                    {{ match.plant.category.name }}
+                                </span>
+                            </div>
+                            <div class="text-end">
+                                <div class="score-badge score-{{ match.status }}">{{ match.score|floatformat:0 }}%</div>
+                                <div class="text-muted small">совместимость</div>
+                            </div>
+                        </div>
+
+                        <div class="progress progress-{{ match.status }} my-2" style="height: 8px;">
+                            <div class="progress-bar" role="progressbar"
+                                 style="width: {{ match.score|floatformat:0 }}%"
+                                 aria-valuenow="{{ match.score|floatformat:0 }}"
+                                 aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+
+                        <div class="mt-2">
+                            {% for criterion in match.criteria %}
+                                <div class="criterion {{ criterion.status }}">
+                                    <div class="d-flex justify-content-between">
+                                        <span class="fw-semibold">{{ criterion.label }}</span>
+                                        <span class="text-muted small">{{ criterion.points|floatformat:"-1" }} / {{ criterion.weight }}</span>
+                                    </div>
+                                    <div class="small">{{ criterion.text }}</div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% else %}
+    <div class="alert alert-warning">
+        Каталог растений пуст. Добавьте растения через админ-панель или командой <code>seed_plants</code>.
+    </div>
+{% endif %}
+{% endblock %}

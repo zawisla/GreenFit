@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Статистика подбора растений{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-4">Статистика подбора</h1>
+
+{% if not stats.has_data %}
+    <div class="alert alert-info">
+        Пока нет ни одного подбора.
+        <a href="{% url 'selector:select' %}" class="alert-link">Выполните первый подбор</a>,
+        чтобы здесь появилась статистика.
+    </div>
+{% else %}
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card text-center border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="display-6 fw-bold text-success">{{ stats.total_selections }}</div>
+                    <div class="text-muted">подборов выполнено</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="display-6 fw-bold text-success">{{ stats.average_score }}%</div>
+                    <div class="text-muted">средняя совместимость</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card text-center border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="display-6 fw-bold text-success">{{ stats.total_matches }}</div>
+                    <div class="text-muted">оценок рассчитано</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h2 class="h5 mb-3">Топ-5 растений по средней совместимости</h2>
+                    <canvas id="topChart" height="220"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h2 class="h5 mb-3">Результаты по сложности ухода</h2>
+                    <canvas id="difficultyChart" height="220"></canvas>
+                    <table class="table table-sm mt-3 mb-0">
+                        <thead>
+                            <tr><th>Сложность</th><th class="text-end">Оценок</th><th class="text-end">Ср. балл</th></tr>
+                        </thead>
+                        <tbody>
+                            {% for row in stats.difficulty %}
+                                <tr>
+                                    <td>{{ row.label }}</td>
+                                    <td class="text-end">{{ row.count }}</td>
+                                    <td class="text-end">{{ row.avg_score }}%</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{ stats.top_plants|json_script:"top-data" }}
+    {{ stats.difficulty|json_script:"difficulty-data" }}
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+{% if stats.has_data %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>
+    const topData = JSON.parse(document.getElementById('top-data').textContent);
+    const diffData = JSON.parse(document.getElementById('difficulty-data').textContent);
+
+    new Chart(document.getElementById('topChart'), {
+        type: 'bar',
+        data: {
+            labels: topData.map(item => item.name),
+            datasets: [{
+                label: 'Средняя совместимость, %',
+                data: topData.map(item => item.avg_score),
+                backgroundColor: '#2e7d32',
+            }],
+        },
+        options: {
+            indexAxis: 'y',
+            scales: { x: { beginAtZero: true, max: 100 } },
+            plugins: { legend: { display: false } },
+        },
+    });
+
+    new Chart(document.getElementById('difficultyChart'), {
+        type: 'doughnut',
+        data: {
+            labels: diffData.map(item => item.label),
+            datasets: [{
+                data: diffData.map(item => item.count),
+                backgroundColor: ['#2e7d32', '#f57f17', '#c62828'],
+            }],
+        },
+        options: { plugins: { legend: { position: 'bottom' } } },
+    });
+</script>
+{% endif %}
+{% endblock %}
