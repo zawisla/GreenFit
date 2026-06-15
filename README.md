@@ -34,9 +34,11 @@ GreenFit анализирует шесть параметров помещени
 
 ## Скриншоты
 
-| Главная и форма подбора | Результаты с пояснениями | Статистика |
-|---|---|---|
-| ![Главная](docs/screenshots/home.png) | ![Результаты](docs/screenshots/result.png) | ![Статистика](docs/screenshots/statistics.png) |
+| Главная | Форма подбора с погодой |
+|---|---|
+| ![Главная](docs/screenshots/home.png) | ![Форма подбора](docs/screenshots/select.png) |
+| **Результаты с пояснениями** | **Статистика (Pandas + Chart.js)** |
+| ![Результаты](docs/screenshots/result.png) | ![Статистика](docs/screenshots/statistics.png) |
 
 ## Запуск проекта локально
 
