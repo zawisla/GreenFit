@@ -10,6 +10,10 @@ against the model choices before anything is written, so a typo in the data
 fails loudly instead of producing a broken catalogue.
 """
 
+import shutil
+from pathlib import Path
+
+from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
@@ -23,6 +27,24 @@ CHOICE_FIELDS = {
     "care_difficulty": Plant.CareDifficulty,
     "water_frequency": Plant.WaterFrequency,
 }
+
+# Photos bundled with the repository; copied into MEDIA when seeding.
+SEED_IMAGES_DIR = Path(__file__).resolve().parents[2] / "seed_images"
+
+
+def ensure_seed_image(slug):
+    """Copy a bundled photo into MEDIA and return its field name, or None."""
+    if not slug:
+        return None
+    source = SEED_IMAGES_DIR / f"{slug}.jpg"
+    if not source.exists():
+        return None
+    target_dir = Path(settings.MEDIA_ROOT) / "plants"
+    target_dir.mkdir(parents=True, exist_ok=True)
+    target = target_dir / f"{slug}.jpg"
+    if not target.exists():
+        shutil.copy(source, target)
+    return f"plants/{slug}.jpg"
 
 
 def validate_catalogue(category_slugs):
@@ -79,9 +101,13 @@ class Command(BaseCommand):
         for data in PLANTS:
             payload = dict(data)
             category = categories[payload.pop("category")]
+            image_name = ensure_seed_image(payload.pop("image_slug", None))
+            defaults = {**payload, "category": category}
+            if image_name:
+                defaults["image"] = image_name
             _, was_created = Plant.objects.update_or_create(
                 name=payload["name"],
-                defaults={**payload, "category": category},
+                defaults=defaults,
             )
             created += int(was_created)
 

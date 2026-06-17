@@ -1,7 +1,11 @@
+from pathlib import Path
+
 from django.test import SimpleTestCase
 
 from catalog.models import Plant
 from catalog.plant_data import CATEGORIES, PLANTS
+
+SEED_IMAGES_DIR = Path(__file__).resolve().parent / "seed_images"
 
 
 class PlantCatalogueDataTests(SimpleTestCase):
@@ -37,3 +41,12 @@ class PlantCatalogueDataTests(SimpleTestCase):
         used = {plant["category"] for plant in PLANTS}
         for category in CATEGORIES:
             self.assertIn(category["slug"], used, f"Пустая категория: {category['slug']}")
+
+    def test_image_slugs_are_unique(self):
+        slugs = [plant["image_slug"] for plant in PLANTS]
+        self.assertEqual(len(slugs), len(set(slugs)))
+
+    def test_every_plant_ships_with_a_photo(self):
+        for plant in PLANTS:
+            photo = SEED_IMAGES_DIR / f"{plant['image_slug']}.jpg"
+            self.assertTrue(photo.exists(), f"Нет фото: {plant['name']}")

@@ -11,6 +11,8 @@ choices (validated by ``seed_plants`` and by ``catalog.tests``):
     water    : rare | regular | frequent
 """
 
+from django.utils.text import slugify
+
 
 def P(name, scientific_name, category, light, humidity, t_min, t_max,
       toxic, care, water, height, description):
@@ -224,3 +226,20 @@ PLANTS = [
     P("Росянка", "Drosera", "carnivorous", "bright", "high", 15, 27, False, "hard", "frequent", 20, "Листья в липких «росинках», ловящих добычу."),
     P("Саррацения", "Sarracenia", "carnivorous", "bright", "high", 15, 28, False, "hard", "frequent", 60, "Трубчатые ловчие листья-кувшины."),
 ]
+
+
+def _assign_image_slugs():
+    """Give every plant a stable Latin filename slug for its photo."""
+    used = set()
+    for plant in PLANTS:
+        base = slugify(plant["scientific_name"]) or slugify(plant["name"]) or "plant"
+        slug = base
+        index = 2
+        while slug in used:
+            slug = f"{base}-{index}"
+            index += 1
+        used.add(slug)
+        plant["image_slug"] = slug
+
+
+_assign_image_slugs()
