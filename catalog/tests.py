@@ -1,8 +1,9 @@
 from pathlib import Path
 
-from django.test import SimpleTestCase
+from django.test import SimpleTestCase, TestCase
+from django.urls import reverse
 
-from catalog.models import Plant
+from catalog.models import Plant, PlantCategory
 from catalog.plant_data import CATEGORIES, PLANTS
 
 SEED_IMAGES_DIR = Path(__file__).resolve().parent / "seed_images"
@@ -50,3 +51,39 @@ class PlantCatalogueDataTests(SimpleTestCase):
         for plant in PLANTS:
             photo = SEED_IMAGES_DIR / f"{plant['image_slug']}.jpg"
             self.assertTrue(photo.exists(), f"Нет фото: {plant['name']}")
+
+
+class CatalogueViewTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.category = PlantCategory.objects.create(name="Суккуленты", slug="succulents")
+        cls.safe = Plant.objects.create(
+            name="Эхеверия", scientific_name="Echeveria", category=cls.category,
+            light_needs="bright", humidity_needs="low", temp_min=10, temp_max=27,
+            toxicity=False, care_difficulty="easy", water_frequency="rare", max_height=15,
+        )
+        cls.toxic = Plant.objects.create(
+            name="Алоэ", scientific_name="Aloe vera", category=cls.category,
+            light_needs="bright", humidity_needs="low", temp_min=13, temp_max=30,
+            toxicity=True, care_difficulty="easy", water_frequency="rare", max_height=60,
+        )
+
+    def test_list_page_loads(self):
+        response = self.client.get(reverse("catalog:list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Эхеверия")
+
+    def test_detail_page_loads(self):
+        response = self.client.get(reverse("catalog:detail", args=[self.safe.pk]))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Echeveria")
+
+    def test_search_filters_by_name(self):
+        response = self.client.get(reverse("catalog:list"), {"q": "Алоэ"})
+        self.assertContains(response, "Алоэ")
+        self.assertNotContains(response, "Эхеверия")
+
+    def test_pet_safe_filter_excludes_toxic(self):
+        response = self.client.get(reverse("catalog:list"), {"pet_safe": "on"})
+        self.assertContains(response, "Эхеверия")
+        self.assertNotContains(response, "Алоэ")

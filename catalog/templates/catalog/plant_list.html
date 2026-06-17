@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Каталог растений — GreenFit{% endblock %}
+
+{% block content %}
+<h1 class="h3 mb-4">Каталог растений</h1>
+
+<form method="get" class="row g-2 align-items-end mb-3">
+    <div class="col-sm-5">
+        <label class="form-label" for="q">Поиск</label>
+        <input type="text" id="q" name="q" value="{{ query }}" class="form-control"
+               placeholder="Название или научное имя">
+    </div>
+    <div class="col-sm-4">
+        <label class="form-label" for="category">Категория</label>
+        <select id="category" name="category" class="form-select">
+            <option value="">Все категории</option>
+            {% for category in categories %}
+                <option value="{{ category.slug }}" {% if category.slug == active_category %}selected{% endif %}>
+                    {{ category.name }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-sm-2">
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="pet_safe" name="pet_safe"
+                   {% if pet_safe %}checked{% endif %}>
+            <label class="form-check-label" for="pet_safe">Безопасные для животных</label>
+        </div>
+    </div>
+    <div class="col-sm-1">
+        <button class="btn btn-success w-100">Найти</button>
+    </div>
+</form>
+
+<p class="text-muted">Найдено растений: {{ total }}</p>
+
+<div class="row g-3">
+    {% for plant in page_obj %}
+        <div class="col-6 col-md-4 col-lg-3">
+            <a href="{% url 'catalog:detail' plant.pk %}" class="text-decoration-none text-dark">
+                <div class="card h-100 plant-card">
+                    {% if plant.image %}
+                        <img src="{{ plant.image.url }}" class="card-img-top plant-thumb" alt="{{ plant.name }}">
+                    {% else %}
+                        <div class="plant-thumb-placeholder">🪴</div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h2 class="h6 mb-0">{{ plant.name }}</h2>
+                        <div class="text-muted fst-italic small">{{ plant.scientific_name }}</div>
+                        <div class="mt-2">
+                            <span class="badge text-bg-success-subtle text-success-emphasis">{{ plant.category.name }}</span>
+                            {% if not plant.toxicity %}<span class="badge text-bg-light border">🐾 безопасно</span>{% endif %}
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    {% empty %}
+        <p class="text-muted">Ничего не найдено. Измените параметры поиска.</p>
+    {% endfor %}
+</div>
+
+{% if page_obj.has_other_pages %}
+    <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page_obj.previous_page_number }}">← Назад</a>
+                </li>
+            {% endif %}
+            <li class="page-item disabled">
+                <span class="page-link">Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+            </li>
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page_obj.next_page_number }}">Вперёд →</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+{% endif %}
+{% endblock %}

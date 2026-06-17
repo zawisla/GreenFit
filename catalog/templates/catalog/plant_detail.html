@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}{{ plant.name }} — GreenFit{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'catalog:list' %}">Каталог</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{ plant.name }}</li>
+    </ol>
+</nav>
+
+<div class="row g-4">
+    <div class="col-md-5">
+        {% if plant.image %}
+            <img src="{{ plant.image.url }}" class="img-fluid rounded shadow-sm w-100" alt="{{ plant.name }}">
+        {% else %}
+            <div class="plant-thumb-placeholder rounded" style="height: 320px;">🪴</div>
+        {% endif %}
+    </div>
+    <div class="col-md-7">
+        <h1 class="h3 mb-1">{{ plant.name }}</h1>
+        <p class="text-muted fst-italic">{{ plant.scientific_name }}</p>
+        <span class="badge text-bg-success-subtle text-success-emphasis mb-3">{{ plant.category.name }}</span>
+        {% if plant.description %}<p>{{ plant.description }}</p>{% endif %}
+
+        <table class="table">
+            <tbody>
+                <tr><th scope="row">Освещение</th><td>{{ plant.get_light_needs_display }}</td></tr>
+                <tr><th scope="row">Влажность</th><td>{{ plant.get_humidity_needs_display }}</td></tr>
+                <tr><th scope="row">Температура</th><td>{{ plant.temperature_range }}</td></tr>
+                <tr><th scope="row">Полив</th><td>{{ plant.get_water_frequency_display }}</td></tr>
+                <tr><th scope="row">Сложность ухода</th><td>{{ plant.get_care_difficulty_display }}</td></tr>
+                <tr><th scope="row">Максимальная высота</th><td>{{ plant.max_height }} см</td></tr>
+                <tr>
+                    <th scope="row">Для животных</th>
+                    <td>{% if plant.toxicity %}⚠️ токсично{% else %}🐾 безопасно{% endif %}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <a href="{% url 'selector:select' %}" class="btn btn-success">Подобрать под мою комнату</a>
+    </div>
+</div>
+{% endblock %}

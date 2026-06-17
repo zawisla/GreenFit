@@ -13,6 +13,7 @@ admin.site.index_title = "Управление каталогом растени
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("accounts.urls")),
+    path("catalog/", include("catalog.urls")),
     path("", include("selector.urls")),
 ]
 
