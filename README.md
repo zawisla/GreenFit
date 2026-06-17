@@ -1,5 +1,7 @@
 # 🌿 GreenFit
 
+[![CI](https://github.com/zawisla/GreenFit/actions/workflows/ci.yml/badge.svg)](https://github.com/zawisla/GreenFit/actions/workflows/ci.yml)
+
 **Подбор комнатных растений по микроклимату вашей квартиры.**
 
 GreenFit анализирует шесть параметров помещения (освещённость, влажность, температуру,
@@ -17,11 +19,15 @@ GreenFit анализирует шесть параметров помещени
 
 - 📝 Форма из 6 параметров помещения с серверной валидацией
 - ⚖️ Расчёт совместимости 0–100 % по шести взвешенным критериям с пояснениями
+- 🗂️ Каталог из **133 растений** (14 категорий) с поиском, фильтрами и страницей каждого растения
+- 🖼️ Фотография для каждого растения
+- 🎛️ Фильтры результатов: безопасные для животных, простой уход, по категории
 - 🌤️ Автоподстановка температуры и влажности по городу через **Open-Meteo API** (AJAX)
 - 📊 Страница статистики: средний балл, топ-5 растений, распределение по сложности
   ухода (**Pandas** + интерактивные графики **Chart.js**)
 - 👤 Регистрация и личная история подборов
 - 🛠️ Управление каталогом через админ-панель Django (поиск, фильтры)
+- ✅ **32 автоматических теста** и непрерывная интеграция (GitHub Actions)
 
 ## Технологии
 
@@ -34,11 +40,16 @@ GreenFit анализирует шесть параметров помещени
 
 ## Скриншоты
 
-| Главная | Форма подбора с погодой |
+| Главная | Каталог с поиском и фильтрами |
 |---|---|
-| ![Главная](docs/screenshots/home.png) | ![Форма подбора](docs/screenshots/select.png) |
-| **Результаты с пояснениями** | **Статистика (Pandas + Chart.js)** |
-| ![Результаты](docs/screenshots/result.png) | ![Статистика](docs/screenshots/statistics.png) |
+| ![Главная](docs/screenshots/home.png) | ![Каталог](docs/screenshots/catalog.png) |
+| **Результаты с фото и пояснениями** | **Карточка растения** |
+| ![Результаты](docs/screenshots/result.png) | ![Карточка растения](docs/screenshots/plant_detail.png) |
+| **Подбор с погодой** | **Статистика (Pandas + Chart.js)** |
+| ![Форма подбора](docs/screenshots/select.png) | ![Статистика](docs/screenshots/statistics.png) |
+
+> Фотографии растений взяты из **Wikimedia Commons / Wikipedia** и используются в
+> учебных целях.
 
 ## Запуск проекта локально
 
@@ -72,7 +83,7 @@ GreenFit анализирует шесть параметров помещени
 5. **Примените миграции и наполните каталог:**
    ```bash
    python manage.py migrate
-   python manage.py seed_plants
+   python manage.py seed_plants   # 14 категорий, 133 растения с фотографиями
    ```
 
 6. **Создайте администратора (для доступа в админ-панель):**
@@ -98,25 +109,28 @@ python manage.py test
 ```
 GreenFit/
 ├── greenfit/          # настройки проекта и корневой URLconf
-├── catalog/           # каталог: модели PlantCategory и Plant, админка,
-│   └── management/    # команда seed_plants (демо-данные)
+├── catalog/           # каталог: модели, админка, представления и шаблоны
+│   ├── plant_data.py  #   133 растения в 14 категориях
+│   ├── seed_images/   #   фотографии растений
+│   └── management/    #   команда seed_plants
 ├── selector/          # подбор: RoomCondition, MatchResult, формы, представления,
 │                      #   matching.py (алгоритм), weather.py (API), analytics.py (Pandas)
 ├── accounts/          # регистрация, вход, выход
 ├── templates/         # базовый шаблон и общие partials
 ├── static/            # CSS
+├── .github/workflows/ # непрерывная интеграция (GitHub Actions)
 ├── requirements.txt
 ├── .env.example
 ├── TZ.md              # техническое задание
+├── DEPLOY.md          # инструкция по развёртыванию
 └── README.md
 ```
 
 ## Развёртывание
 
 Проект готов к публикации на **PythonAnywhere**: статика отдаётся через WhiteNoise,
-все секреты вынесены в переменные окружения, поддерживается PostgreSQL через
-`DATABASE_URL`. Перед публикацией задайте `DJANGO_DEBUG=False`, `DJANGO_SECRET_KEY`,
-`DJANGO_ALLOWED_HOSTS` и выполните `python manage.py collectstatic`.
+все секреты вынесены в переменные окружения, поддерживаются PostgreSQL и MySQL через
+`DATABASE_URL`. Подробная пошаговая инструкция — в файле **[DEPLOY.md](DEPLOY.md)**.
 
 ## Лицензия
 
