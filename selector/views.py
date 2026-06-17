@@ -65,11 +65,27 @@ def result(request, pk):
 
     plants = Plant.objects.select_related("category")
     matches = rank_plants(room, plants)
+
+    # Optional filters narrow the ranked list without changing the scoring.
+    pet_safe = request.GET.get("pet_safe") == "on"
+    easy_only = request.GET.get("easy") == "on"
+    category = (request.GET.get("category") or "").strip()
+    if pet_safe:
+        matches = [m for m in matches if not m.plant.toxicity]
+    if easy_only:
+        matches = [m for m in matches if m.plant.care_difficulty == Plant.CareDifficulty.EASY]
+    if category:
+        matches = [m for m in matches if m.plant.category.slug == category]
+
     context = {
         "room": room,
         "matches": matches[:RESULT_DISPLAY_LIMIT],
         "shown": min(len(matches), RESULT_DISPLAY_LIMIT),
         "total": len(matches),
+        "categories": PlantCategory.objects.all(),
+        "pet_safe": pet_safe,
+        "easy": easy_only,
+        "active_category": category,
     }
     return render(request, "selector/result.html", context)
 

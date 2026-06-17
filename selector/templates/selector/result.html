@@ -22,6 +22,38 @@
     </div>
 </div>
 
+<form method="get" class="card mb-4">
+    <div class="card-body">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-4">
+                <label class="form-label" for="category">Категория</label>
+                <select id="category" name="category" class="form-select form-select-sm">
+                    <option value="">Все категории</option>
+                    {% for c in categories %}
+                        <option value="{{ c.slug }}" {% if c.slug == active_category %}selected{% endif %}>{{ c.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-5">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="pet_safe" name="pet_safe" {% if pet_safe %}checked{% endif %}>
+                    <label class="form-check-label" for="pet_safe">Безопасные для животных</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="easy" name="easy" {% if easy %}checked{% endif %}>
+                    <label class="form-check-label" for="easy">Только простой уход</label>
+                </div>
+            </div>
+            <div class="col-md-3 text-md-end">
+                <button class="btn btn-success btn-sm">Применить фильтры</button>
+                {% if pet_safe or easy or active_category %}
+                    <a href="{% url 'selector:result' room.pk %}" class="btn btn-outline-secondary btn-sm">Сбросить</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</form>
+
 {% if matches %}
     <p class="text-muted">
         Показаны {{ shown }} наиболее подходящих {% if total > shown %}из {{ total }} {% endif %}растений,
@@ -81,7 +113,8 @@
     {% endfor %}
 {% else %}
     <div class="alert alert-warning">
-        Каталог растений пуст. Добавьте растения через админ-панель или командой <code>seed_plants</code>.
+        Подходящих растений не найдено. Попробуйте ослабить фильтры{% if pet_safe or easy or active_category %} или
+        <a href="{% url 'selector:result' room.pk %}" class="alert-link">сбросить их</a>{% endif %}.
     </div>
 {% endif %}
 {% endblock %}

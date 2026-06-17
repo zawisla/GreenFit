@@ -199,6 +199,17 @@ class SelectionFlowTests(TestCase):
         self.assertContains(response, "Эхеверия")
         self.assertContains(response, "совместимость")
 
+    def test_result_pet_safe_filter_hides_toxic(self):
+        room = RoomCondition.objects.create(
+            light_level="bright", humidity="low", temperature=22,
+            room_size="small", has_pets=True, care_time="minimal",
+        )
+        response = self.client.get(
+            reverse("selector:result", args=[room.pk]), {"pet_safe": "on"}
+        )
+        self.assertContains(response, "Эхеверия")
+        self.assertNotContains(response, "Монстера")
+
     def test_history_requires_login(self):
         response = self.client.get(reverse("selector:history"))
         self.assertEqual(response.status_code, 302)
