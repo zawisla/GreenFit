@@ -35,6 +35,9 @@ def env_list(name: str, default: str = "") -> list[str]:
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env_bool("DJANGO_DEBUG", default=False)
 
+# True while running the test suite (manage.py test).
+TESTING = "test" in sys.argv
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 if not SECRET_KEY:
@@ -141,7 +144,7 @@ STORAGES = {
 
 # The manifest storage requires `collectstatic` to have run; while testing it
 # has not, so fall back to a plain storage that does not need a manifest.
-if "test" in sys.argv:
+if TESTING:
     STORAGES["staticfiles"]["BACKEND"] = (
         "django.contrib.staticfiles.storage.StaticFilesStorage"
     )
@@ -158,7 +161,8 @@ LOGIN_REDIRECT_URL = "selector:home"
 LOGOUT_REDIRECT_URL = "selector:home"
 
 # Hardening that only applies on the production host (DEBUG=False behind HTTPS).
-if not DEBUG:
+# Skipped during tests so the test client is not redirected to HTTPS.
+if not DEBUG and not TESTING:
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
