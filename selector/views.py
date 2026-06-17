@@ -11,6 +11,10 @@ from .matching import rank_plants
 from .models import MatchResult, RoomCondition
 from .weather import WeatherError, fetch_current_weather
 
+# How many ranked plants to display on the result page. Every plant is still
+# scored and stored; this only limits how many cards are rendered.
+RESULT_DISPLAY_LIMIT = 30
+
 
 def home(request):
     """Landing page with a short pitch and catalogue size."""
@@ -63,8 +67,9 @@ def result(request, pk):
     matches = rank_plants(room, plants)
     context = {
         "room": room,
-        "matches": matches,
-        "best": matches[0] if matches else None,
+        "matches": matches[:RESULT_DISPLAY_LIMIT],
+        "shown": min(len(matches), RESULT_DISPLAY_LIMIT),
+        "total": len(matches),
     }
     return render(request, "selector/result.html", context)
 
