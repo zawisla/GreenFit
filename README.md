@@ -10,8 +10,7 @@ GreenFit анализирует шесть параметров помещени
 критерию. Это не просто фильтр каталога, а взвешенная оценка, которая помогает выбрать
 растение, которое действительно приживётся.
 
-🔗 **Демо:** _ссылка появится после публикации на PythonAnywhere_ —
-`https://<ваш-аккаунт>.pythonanywhere.com`
+🔗 **Демо:** **https://zawisla.pythonanywhere.com**
 
 ---
 
@@ -55,7 +54,7 @@ GreenFit анализирует шесть параметров помещени
 
 1. **Клонируйте репозиторий:**
    ```bash
-   git clone https://github.com/<ваш-аккаунт>/GreenFit.git
+   git clone https://github.com/zawisla/GreenFit.git
    cd GreenFit
    ```
 
