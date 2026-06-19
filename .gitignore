@@ -26,6 +26,3 @@ local_settings.py
 .vscode/
 *.swp
 .DS_Store
-
-# Agent / tooling
-.claude/
