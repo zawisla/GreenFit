@@ -121,15 +121,15 @@ GreenFit/
 ├── requirements.txt
 ├── .env.example
 ├── TZ.md              # техническое задание
-├── DEPLOY.md          # инструкция по развёртыванию
 └── README.md
 ```
 
 ## Развёртывание
 
-Проект готов к публикации на **PythonAnywhere**: статика отдаётся через WhiteNoise,
+Проект развёрнут на **PythonAnywhere** (ссылка вверху): статика отдаётся через WhiteNoise,
 все секреты вынесены в переменные окружения, поддерживаются PostgreSQL и MySQL через
-`DATABASE_URL`. Подробная пошаговая инструкция — в файле **[DEPLOY.md](DEPLOY.md)**.
+`DATABASE_URL`. Перед публикацией задайте `DJANGO_DEBUG=False`, `DJANGO_SECRET_KEY`,
+`DJANGO_ALLOWED_HOSTS` и выполните `python manage.py collectstatic`.
 
 ## Лицензия
 
